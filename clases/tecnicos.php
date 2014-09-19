@@ -91,6 +91,48 @@ GROUP BY ape_paterno
         
     }
 
+    function getTecnicoAllxCedula($cnx,$idcedula){
+        $cnx->exec("set names utf8");
+        $sql = "select id,concat(ape_paterno,' ',ape_materno,' ',nombres) as nombre
+                from webpsi_criticos.tecnicos where idcedula=$idcedula and activo = 1
+                order by ape_paterno ";
+
+        $res = $cnx->query($sql);
+
+        while ($row = $res->fetch(PDO::FETCH_ASSOC))
+        {
+            $arr[] = $row;
+        }
+        return $arr;
+
+    }
+
+
+    function getTecnicosAllxCedulaSelectOptions($cnx,$idcedula,$ids= "")
+    {
+        $registros = $this->getTecnicoAllxCedula($cnx,$idcedula);
+        $options = "";
+        if(count($registros))
+        {
+            foreach($registros as $row)
+            {
+                if(!empty($ids)){
+                    $tecs = explode(",",$ids);
+                    if(in_array($row["id"],$tecs)){
+                        $selected = "selected";
+                    }else{
+                        $selected = "";
+                    }
+                }
+                $options .= "<option class='added' value='".$row["id"]."' $selected>". $row["nombre"]. "</option>";
+            }
+        }
+
+
+        return $options;
+
+    }
+
 }
 
 ?>

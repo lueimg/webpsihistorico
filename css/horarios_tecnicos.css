@@ -85,6 +85,10 @@ padding: 3px 3px;
     background: #1b5790;
     color: #fff !important;
     border-radius: 25px;
+    display: inline-block;
+    width:100px;
+    text-align: left;
+    font-weight: bold;
 }
 
 td {

@@ -2,7 +2,26 @@
 
 class Empresa{
 
-	function getIdEmpresa($cnx,$vempresa){
+    protected $cnx;
+
+    /**
+     * @return mixed
+     */
+    public function getCnx()
+    {
+        return $this->cnx;
+    }
+
+    /**
+     * @param mixed $cnx
+     */
+    public function setCnx($cnx)
+    {
+        $this->cnx = $cnx;
+    }
+
+
+    function getIdEmpresa($cnx,$vempresa){
 
         $sql = "select * from webpsi_criticos.empresa where nombre='$vempresa'";
         $res = $cnx->query($sql);
@@ -31,6 +50,28 @@ class Empresa{
         return $arr;
         
 	}
+    function getEmpresaAllSelectOptions($idseleted = ""){
+
+        $empresas = $this->getEmpresaAll($this->getCnx());
+
+        $options = "";
+        if(count($empresas))
+        {
+            foreach($empresas as $empresa)
+            {
+                $selected = "";
+                if($empresa["id"] == $idseleted)
+                {
+                    $selected = "selected";
+                }
+                $options .= "<option value='".$empresa["id"]."' $selected>". $empresa["nombre"]. "</option>";
+            }
+        }
+
+
+        return $options;
+
+    }
 
 }
 

@@ -57,12 +57,25 @@ $cnx = $objCnx->conectarPDO();
 $finicio = $_GET["finicio"];
 $ffin  = $_GET["ffin"];
 $quiebre = $_GET["quiebre"];
-
+$empresa = $_GET["empresa"];
+$cedula = $_GET["cedula"];
+$tecnico = $_GET["tecnico"];
+$wheres = "";
 if($quiebre!=''){
-    $wheres=" and g.quiebre in ('".$quiebre."') ";
+    $wheres.=" and g.quiebre in ('".$quiebre."') ";
 }
 
+if($empresa!=''){
+    $wheres.=" and gm.id_empresa = $empresa ";
+}
 
+if($cedula!=''){
+    $wheres.=" and t.idcedula = $cedula ";
+}
+
+if($tecnico!=''){
+    $wheres.=" and t.id in($tecnico) ";
+}
 
 $cad="
 SELECT final.*

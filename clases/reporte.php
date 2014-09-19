@@ -2,14 +2,35 @@
 
 class Reporte{
 
-	function ListarHorariosTecnicos($cnx,$finicio,$ffin,$quiebre){ 
+	function ListarHorariosTecnicos($cnx,$finicio,$ffin,$filtros = array()){
 
         $sql_inserta_restantes  = "SELECT webpsi.GenerarIdMovIdTec() as cant";
         $r_restantes            = $cnx->query($sql_inserta_restantes);
 
-        if($quiebre!=''){
-            $wheres=" and g.quiebre in ('".$quiebre."') ";
+        $wheres = "";
+        if(count($filtros) > 0){
+            //CREO EN VARIABLES LOS FILTROS ENVIADOS
+            extract($filtros);
+
+            if($filtro_quiebre!=''){
+                $wheres.=" and g.quiebre in ('".$filtro_quiebre."') ";
+            }
+
+            if($idempresa!=''){
+                $wheres.=" and gm.id_empresa = $idempresa ";
+            }
+
+            if($idcedula!=''){
+                $wheres.=" and t.idcedula = $idcedula ";
+            }
+
+            if($ids_tecnico!=''){
+                $wheres.=" and t.id in($ids_tecnico) ";
+            }
+
         }
+
+
 
         $cnx->exec("set names utf8");      
         $sql = "
@@ -254,7 +275,7 @@ FROM (
 GROUP BY final.tecnico,final.fecha_agenda
 order by final.tecnico,final.fecha_agenda
 ";
-        //echo $sql;
+//        echo $sql;
         $res = $cnx->query($sql);
 
         while ($row = $res->fetch(PDO::FETCH_ASSOC))
