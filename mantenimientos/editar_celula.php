@@ -4,18 +4,19 @@ ini_set('display_errors',1);
 
 
 require_once("../../../cabecera.php");
-require_once("../clases/class.TecnicosCriticos.php");
+require_once("../clases/class.CelulasCriticos.php");
 require_once("../clases/class.EmpresasCriticos.php");
 
-$Tecnico = new TecnicosCriticos();
+$Celula = new CelulasCriticos();
 
-$idtecnico = $_REQUEST["idtecnico"];
+$idcedula = $_REQUEST["idcedula"];
 
-$arrTecnico = $Tecnico->BuscarTecnico($idtecnico);
-//print_r($arrTecnico)
-$idEmpresaTecnico = $arrTecnico[0]["id_empresa"];
-//$idEmpresaTecnico = 1;
-$arrCedulas = $Tecnico->ListarCelulas($idEmpresaTecnico);
+echo $idcedula;
+
+$arrCedula = $Celula->BuscarCelula($idcedula);
+print_r($arrCedula);
+$idEmpresaTecnico = $arrCedula[0]["idempresa"];
+
 
 //var_dump($arrTecnico);
 $Empresa = new EmpresasCriticos();
