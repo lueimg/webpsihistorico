@@ -56,10 +56,17 @@ class Cedula{
         $cnx = $this->getCnx();
         $idempresa = $this->getIdempresa();
 
+        $where = "";
+        if(!empty($idempresa))
+        {
+         $where = " and idempresa = $idempresa";
+        }
+
         $cnx->exec("set names utf8");
         $sql = "select idcedula id,nombre
                 from webpsi_criticos.cedula
-                where estado='1' and idempresa = $idempresa
+                where estado='1'
+                $where
                 order by nombre";
 
         $res = $cnx->query($sql);

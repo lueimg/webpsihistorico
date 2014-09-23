@@ -10,6 +10,8 @@ header("Pragma: no-cache");
 require_once("../../../cabecera.php");
 require_once("../clases/class.TecnicosCriticos.php");
 
+$action = $_POST["action"];
+
 if (isset($_POST["deshabilitar_tecnico"])) {
 	$idTecnico = $_POST["idtecnico"];
 
@@ -27,6 +29,32 @@ if (isset($_POST["habilitar_tecnico"])) {
 		echo "ok";
 	else
 		echo "error";
+
+
+}elseif($action == "filtro_empresa")
+{
+    extract($_POST);
+    $_SESSION["filtro_tec"] = array("tipo"=>"filtro_empresa","idempresa"=> $idempresa );
+    print "ok";
+}elseif($action == "filtro_celula")
+{
+    extract($_POST);
+    $_SESSION["filtro_tec"] = array("tipo"=>"filtro_empresa","idempresa"=> $idempresa , "idcelula"=>$idcelula );
+    print "ok";
+}elseif($action == "filtro_busqueda")
+{
+    extract($_POST);
+    $_SESSION["filtro_tec"] = array("tipo"=>$tipo,"busqueda"=> trim($busqueda) );
+    print "ok";
+}elseif($action == "filtro_principal")
+{
+    extract($_POST);
+    $_SESSION["filtro_tec"] = array("tipo"=>$filtro );
+    print "ok";
+}elseif($action == "reiniciar_filtros")
+{
+    unset($_SESSION["filtro_tec"]);
+    print "ok";
 }
 
 ?>

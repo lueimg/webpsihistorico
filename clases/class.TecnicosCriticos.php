@@ -5,16 +5,120 @@ require_once ("../../../clases/class.Conexion.php");
 
 class TecnicosCriticos{
 
+    protected $tamano = 10;
+    protected $pagina = 1;
+    protected $inicio = 0;
+    protected $Filtros =array();
+
+    /**
+     * @return array
+     */
+    public function getFiltros()
+    {
+        return $this->Filtros;
+    }
+
+    /**
+     * @param array $Filtros
+     */
+    public function setFiltros($Filtros)
+    {
+        $this->Filtros = $Filtros;
+    }
+    /**
+     * @return int
+     */
+    public function getInicio()
+    {
+        return $this->inicio;
+    }
+
+    /**
+     * @param int $inicio
+     */
+    public function setInicio($inicio)
+    {
+        $this->inicio = $inicio;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPagina()
+    {
+        return $this->pagina;
+    }
+
+    /**
+     * @param int $pagina
+     */
+    public function setPagina($pagina)
+    {
+        if(!empty($pagina))
+            $this->pagina = $pagina;
+        else
+            $this->pagina = 1;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTamano()
+    {
+        return $this->tamano;
+    }
+
+    /**
+     * @param int $tamano
+     */
+    public function setTamano($tamano)
+    {
+        $this->tamano = $tamano;
+    }
+
+
+
     public function ListarTecnicosTodos() {
         $db = new Conexion();
         $cnx = $db->conectarBD();
+
+        $filtro = $this->Filtros;
+        //FILTROS
+        $where = "";
+
+        if(!empty($filtro)){
+            if(!empty($filtro["idempresa"])){
+                $where .= " and a.id_empresa = ".$filtro["idempresa"];
+            }
+            if(!empty($filtro["idcelula"])){
+                $where .= " and a.idcedula = ".$filtro["idcelula"];
+            }
+            elseif(!empty($filtro["busqueda"])){
+                if($filtro["tipo"] == "filtro_nombre")
+                    $where .= " and  CONCAT_WS(' ',a.ape_paterno, a.ape_materno, a.nombres)  like '%".$filtro["busqueda"]."%' ";
+                elseif($filtro["tipo"] == "filtro_carnet")
+                    $where .= " and a.carnet like  '%".$filtro["busqueda"]."%' ";
+                elseif($filtro["tipo"] == "filtro_carnet_critico")
+                    $where .= " and a.carnet_critico like  '%".$filtro["busqueda"]."%' ";
+
+
+            }
+        }
+
+
+        //paginacion
+        $this->inicio = ($this->pagina - 1) * $this->tamano;
+
 
         $cad = "SELECT a.id, a.nombre_tecnico, a.id_empresa, a.ape_paterno, a.ape_materno, a.nombres, 
 				e.nombre as empresa, a.activo, a.carnet, a.carnet_critico, a.dni, a.idcedula, c.nombre as cedula, 
 				a.officetrack
                 FROM webpsi_criticos.tecnicos a, webpsi_criticos.empresa e, webpsi_criticos.cedula c
 				WHERE a.id_empresa=e.id AND c.idcedula=a.idcedula
-				ORDER BY ape_paterno ASC; ";
+				$where
+				ORDER BY ape_paterno ASC
+				Limit ".$this->inicio.",".$this->tamano;
+
 		//echo $cad;
 		$res = mysql_query($cad, $cnx) or die(mysql_error()) ;
         while ($row = mysql_fetch_array($res))
@@ -26,8 +130,75 @@ class TecnicosCriticos{
         $db = NULL;
         return $arr;
 		
-    }	
+    }
 
+    public function paginacion($filtro = array()){
+
+        $db = new Conexion();
+        $cnx = $db->conectarBD();
+
+
+
+        $filtro = $this->Filtros;
+        //FILTROS
+        $where = "";
+
+        if(!empty($filtro)){
+
+            if(!empty($filtro["idempresa"])){
+                $where .= " and a.id_empresa = ".$filtro["idempresa"];
+            }
+            if(!empty($filtro["idcelula"])){
+                $where .= " and a.idcedula = ".$filtro["idcelula"];
+            }
+
+            elseif(!empty($filtro["busqueda"])){
+                if($filtro["tipo"] == "filtro_nombre")
+                    $where .= " and  CONCAT_WS(' ',a.ape_paterno, a.ape_materno, a.nombres)  like '%".$filtro["busqueda"]."%' ";
+                elseif($filtro["tipo"] == "filtro_carnet")
+                    $where .= " and a.carnet like  '%".$filtro["busqueda"]."%' ";
+                elseif($filtro["tipo"] == "filtro_carnet_critico")
+                    $where .= " and a.carnet_critico like  '%".$filtro["busqueda"]."%' ";
+
+
+            }
+        }
+
+
+        $cad = "SELECT a.id, a.nombre_tecnico, a.id_empresa, a.ape_paterno, a.ape_materno, a.nombres,
+				e.nombre as empresa, a.activo, a.carnet, a.carnet_critico, a.dni, a.idcedula, c.nombre as cedula,
+				a.officetrack
+                FROM webpsi_criticos.tecnicos a, webpsi_criticos.empresa e, webpsi_criticos.cedula c
+				WHERE a.id_empresa=e.id AND c.idcedula=a.idcedula
+				$where
+                ";
+        $rs = mysql_query($cad, $cnx);
+        $num_total_registros = mysql_num_rows($rs);
+
+        //calculo el total de páginas
+        $total_paginas = ceil($num_total_registros / $this->tamano);
+        $pagina = $this->pagina;
+        $url = "";
+        $html = "";
+
+        if ($total_paginas > 1) {
+            if ($pagina != 1)
+                $html .= '<a href="'.$url.'?pagina='.($pagina-1).'"> << </a>';
+            for ($i=1;$i<=$total_paginas;$i++) {
+                if ($pagina == $i)
+                    //si muestro el índice de la página actual, no coloco enlace
+                    $html .=  $pagina;
+                else
+                    //si el índice no corresponde con la página mostrada actualmente,
+                    //coloco el enlace para ir a esa página
+                    $html .=  '  <a href="'.$url.'?pagina='.$i.'">'.$i.'</a>  ';
+            }
+            if ($pagina != $total_paginas)
+                $html .=  '<a href="'.$url.'?pagina='.($pagina+1).'"> >> </a>';
+        }
+        return $html;
+
+    }
 	
 	public function Deshabilitar($idTecnico) {
         $db = new Conexion();
