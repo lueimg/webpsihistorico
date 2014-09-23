@@ -71,6 +71,10 @@ if($action == "CrearCelula")
     extract($_POST);
     $_SESSION["filtro"] = array("tipo"=>$filtro );
     print "ok";
+}elseif($action == "reiniciar_filtros")
+{
+    unset($_SESSION["filtro"]);
+    print "ok";
 }
 
 ?>

@@ -320,6 +320,7 @@ table {
                     <option value="filtro_nombre">Filtrar Por nombre</option>
                 </select>
             </span>
+            <span><input type="submit" value="Reiniciar filtros" id="btnReiniciar"/></span>
             <div>
                 <div id="filtro_empresa" class="filtro-item" style="display: none">
                     <label class="control-label">Empresa:</label>
@@ -337,7 +338,8 @@ table {
                     <span>
                         <input type="text" id="text_busqueda" class="form-control" placeholder=" Buscar ... "/>
                     </span>
-                    <span><input type="submit" id="btnFiltrar" value="::Filtrar"  class="form-control btn btn-primary" /></span>
+                    <span><input type="submit" id="btnFiltrar" value=":: Filtrar"  class="form-control btn btn-primary" /></span>
+<!--                    <span><input type="submit" id="btnLimpiar" value=":: Limpiar"  class="form-control btn btn-primary" /></span>-->
                 </div>
             </div>
 
@@ -477,6 +479,31 @@ table {
                             alert("Hubo un problema, por favor actualize su pagina. Gracias.")
                         }
                     });
+
+                });
+
+            //REINICIAR FILTROS
+                $("#btnReiniciar").click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url: "modificar_celulas_ajax.php",
+                        data: {
+                            action:"reiniciar_filtros"
+
+                        },
+                        success: function(response) {
+                            window.location.href= "modificar_celulas.php"
+                        },
+                        error:function(){
+                            alert("Hubo un problema, por favor actualize su pagina. Gracias.")
+                        }
+                    });
+
+                });
+
+                //LIMPIAR
+                $("#btnLimpiar").click(function(){
+                    $("#text_busqueda").val("").focus()
 
                 });
 
