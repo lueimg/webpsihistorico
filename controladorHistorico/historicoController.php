@@ -305,7 +305,8 @@ if(isset($_POST["tipo"]) && $_POST["tipo"]=="cargar_tecnico"){
 
 if(isset($_POST['cargarTecnico']) && $_POST["cargarTecnico"]=="cargarTecnico"){
 	$ob_tecnico = new Tecnicos();
-	$tecnicos = $ob_tecnico->getTecnicoAllxEmpresaxQuiebre($cnx, $_POST['idempresa'],$_POST["quiebre"],$_POST['cedula']);
+	//$tecnicos = $ob_tecnico->getTecnicoAllxEmpresaxQuiebre($cnx, $_POST['idempresa'],$_POST["quiebre"],$_POST['cedula']);
+	$tecnicos = $ob_tecnico->getTecnicoAllxCedula($cnx,$_POST['cedula']);
 
 	echo json_encode($tecnicos);
 }
