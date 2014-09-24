@@ -212,7 +212,7 @@ header('Content-Type: text/html; charset=utf-8');
         }
 
         .nueva a {
-            margin-top: 15px;
+            margin-top: 10px;
             display: inline-block;
             font-weight: bold;
         }
@@ -232,7 +232,7 @@ header('Content-Type: text/html; charset=utf-8');
 
     <div id="div_res_grupal" class="div_res_grupal"
          style="border: 1px solid #304B73; padding-top: 0px; float:left; overflow-y: auto;
-			height: 500px; width: 780px;">
+			 width: 780px;">
         <span style="padding: 20px" class="nueva"><a href="#" onclick="nuevo_tecnico();">[ Agregar Tecnico ]</a> </span>
 
         <div id="filtros" class="form-group">
